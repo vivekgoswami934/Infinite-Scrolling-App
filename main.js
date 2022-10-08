@@ -5,6 +5,10 @@ const API =
 
 let photosArray = [];
 
+let ready = false;
+let imagesLoaded = 0;
+let totalImages = 10;
+
 //get photos from api
 const getPhotos = async () => {
   try {
@@ -17,16 +21,41 @@ const getPhotos = async () => {
   }
 };
 
-getPhotos();
+//check if all images are loaded
+function imageLoader() {
+  imagesLoaded++;
+  if (imagesLoaded == totalImages) {
+    ready = true;
+    imagesLoaded = 0;
+  }
+  console.log("image loaded");
+}
 
 const imageContainer = document.getElementById("imgcontainer");
 
 //display data in photos
 function displayPhotos() {
   photosArray?.map((photos) => {
-    console.log("vivek");
+    // console.log("vivek");
     const img = document.createElement("img");
     img.setAttribute("src", photos.urls.regular);
+    img.addEventListener("load", imageLoader);
     imageContainer.appendChild(img);
   });
 }
+
+// document.body.offsetHeight   --> height of website
+// window.scrollY  ---> middle  2000 -- > 1000
+
+// load image when u neares to bottom of page
+
+window.addEventListener("scroll", function scroll() {
+  if (window.scrollY >= document.body.offsetHeight - 2000 && ready) {
+    ready = false;
+    console.log("more image loading....");
+    getPhotos();
+  }
+});
+
+//calling
+getPhotos();
